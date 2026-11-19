@@ -1,3 +1,5 @@
+> **Fork note (groot99-droid):** this is the owner's fork of [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach), kept in step with upstream. The owner's maintained copy is the `agent-reach/` subtree in groot99-droid/Pipelines-Plugin.
+
 <h1 align="center">👁️ Agent Reach</h1>
 
 <p align="center">
