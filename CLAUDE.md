@@ -1,9 +1,11 @@
 # CLAUDE.md
 
 ## Project
-Agent Reach — Python CLI + library that gives AI agents read/search access to 13 internet platforms.
+Agent Reach — Python CLI + library that gives AI agents read/search access to 15 internet platforms (the list is in `llms.txt`).
 Positioning: installer + doctor + config tool. NOT a wrapper — after install, agents call upstream tools directly.
 Repo: github.com/Panniantong/Agent-Reach | License: MIT | Version: 1.5.0
+
+Fork note: this checkout is groot99-droid/Agent-Reach, the owner's fork of upstream. The owner's maintained copy is the git subtree at `agent-reach/` in groot99-droid/Pipelines-Plugin, which adds `NOTICE` and `TOOLSETS.md` and is where the owner's toolsets are wired to it. Change the owner's integration there; keep this fork in step with upstream.
 
 ## Commands
 - `pip install -e .` — Dev install
@@ -15,11 +17,12 @@ Repo: github.com/Panniantong/Agent-Reach | License: MIT | Version: 1.5.0
 
 ## Structure
 - `agent_reach/cli.py` — CLI entry point (argparse)
-- `agent_reach/core.py` — Core read/search routing logic
+- `agent_reach/core.py` — `AgentReach`: the doctor entry point (`doctor()`, `doctor_report()`)
 - `agent_reach/config.py` — Config management (YAML, env vars)
 - `agent_reach/doctor.py` — Diagnostics engine
 - `agent_reach/channels/` — One file per platform (twitter.py, reddit.py, youtube.py, etc.)
 - `agent_reach/channels/base.py` — Base channel class (all channels inherit from this)
+- `agent_reach/backends/` — shared backends (`opencli.py`); `probe.py`, `cookie_extract.py`, `transcribe.py` — probing, cookie import, podcast transcription
 - `agent_reach/integrations/mcp_server.py` — MCP server integration
 - `agent_reach/skill/` — OpenClaw skill files
 - `agent_reach/guides/` — Usage guides
@@ -29,7 +32,7 @@ Repo: github.com/Panniantong/Agent-Reach | License: MIT | Version: 1.5.0
 ## Conventions
 - Python 3.10+ with type hints
 - Each channel is a single file in `channels/`, inherits from `BaseChannel`
-- Channel contract: must implement `can_handle(url)`, `read(url)`, `search(query)`, `check()` methods
+- Channel contract: set `name`, `description`, `backends` (probe order) and `tier`; implement `can_handle(url)`; `check()` probes the backends (`ordered_backends()` honours a `<channel>_backend` override). Channels do not read or search for the agent: the agent calls the upstream tool directly. A few carry helpers of their own (`web.read`, `v2ex.search`, `xueqiu.search_stock`)
 - Use `loguru` for logging, `rich` for CLI output
 - Commit format: `type(scope): message` (one commit = one thing)
 - All upstream tool calls go through public API/CLI, never hack internals
